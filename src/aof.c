@@ -865,6 +865,7 @@ int loadAppendOnlyFile(char *filename) {
      */
     server.aof_state = REDIS_AOF_OFF;
 
+    //接收命令的 redis-cli客户端，之所以要一个redis-cli， aof中全是一条条命令
     fakeClient = createFakeClient();
 
     // 设置服务器的状态为：正在载入

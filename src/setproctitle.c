@@ -146,9 +146,13 @@ static int spt_copyargs(int argc, char *argv[]) {
 
 
 void spt_init(int argc, char *argv[]) {
-        char **envp = environ;
+    char **envp = environ;
 	char *base, *end, *nul, *tmp;
 	int i, error;
+
+	/* base end 用到一个知识点
+	*C语言程序，命令行参数argv和环境变量信息environ是在一块连续的内存中表示的，并且environ紧跟在argv后面
+	*/
 
 	if (!(base = argv[0]))
 		return;
@@ -190,13 +194,15 @@ void spt_init(int argc, char *argv[]) {
 	setprogname(tmp);
 #endif
 
-
-	if ((error = spt_copyenv(envp)))
+	//将env copy新开辟的空间里
+	if ((error = spt_copyenv(envp))) 
 		goto error;
 
+	//将args copy新开辟的空间里
 	if ((error = spt_copyargs(argc, argv)))
 		goto error;
 
+	//保留程序运行最初argv和env存储空间，程序展示的名字在改空间中
 	SPT.nul  = nul;
 	SPT.base = base;
 	SPT.end  = end;

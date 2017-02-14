@@ -2166,7 +2166,7 @@ void initServer() {
             }
     }
 
-    // 为本地套接字关联应答处理器
+    // 为本地套接字关联应答处理器, UNIX socket 套接字文件描述符接收事件方法
     if (server.sofd > 0 && aeCreateFileEvent(server.el,server.sofd,AE_READABLE,
         acceptUnixHandler,NULL) == AE_ERR) redisPanic("Unrecoverable error creating server.sofd file event.");
 
@@ -3936,6 +3936,7 @@ int main(int argc, char **argv) {
     /* We need to initialize our libraries, and the server configuration. */
     // 初始化库
 #ifdef INIT_SETPROCTITLE_REPLACEMENT
+    //拷贝argv 和environ 拷贝新的空间，为了后面修改程序名字做铺垫
     spt_init(argc, argv);
 #endif
     setlocale(LC_COLLATE,"");
@@ -3948,7 +3949,7 @@ int main(int argc, char **argv) {
     // 检查服务器是否以 Sentinel 模式启动
     server.sentinel_mode = checkForSentinelMode(argc,argv);
 
-    // 初始化服务器
+    // 初始化服务器，初始化默认配置
     initServerConfig();
 
     /* We need to init sentinel right now as parsing the configuration file
